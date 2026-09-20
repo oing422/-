@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="NovelpiaDownloader.MainPage"
+             Title="Novelpia Downloader">
+  <ScrollView>
+    <VerticalStackLayout Padding="16" Spacing="14">
+
+      <Label Text="Novelpia Downloader" FontSize="28" FontAttributes="Bold"/>
+      <Label Text="Android 모바일판 · 원본 옵션 통합"/>
+
+      <Border StrokeShape="RoundRectangle 16" Padding="14">
+        <VerticalStackLayout Spacing="8">
+          <Label Text="로그인" Style="{StaticResource SectionTitle}"/>
+          <Entry x:Name="EmailEntry" Placeholder="이메일"/>
+          <Entry x:Name="PasswordEntry" Placeholder="비밀번호" IsPassword="True"/>
+          <Entry x:Name="LoginKeyEntry" Placeholder="LOGINKEY 직접 입력"/>
+          <Grid ColumnDefinitions="*,*" ColumnSpacing="8">
+            <Button Text="이메일 로그인" Clicked="LoginClicked"/>
+            <Button Grid.Column="1" Text="LOGINKEY 적용" Clicked="LoginKeyClicked"/>
+          </Grid>
+          <Label x:Name="LoginStatus" Text="로그인되지 않음"/>
+        </VerticalStackLayout>
+      </Border>
+
+      <Border StrokeShape="RoundRectangle 16" Padding="14">
+        <VerticalStackLayout Spacing="8">
+          <Label Text="다운로드" Style="{StaticResource SectionTitle}"/>
+          <Entry x:Name="NovelEntry" Placeholder="소설 번호 또는 URL"/>
+          <Grid ColumnDefinitions="*,*" ColumnSpacing="8">
+            <VerticalStackLayout>
+              <Label Text="시작 화"/>
+              <Entry x:Name="FromEntry" Keyboard="Numeric" Placeholder="전체"/>
+            </VerticalStackLayout>
+            <VerticalStackLayout Grid.Column="1">
+              <Label Text="끝 화"/>
+              <Entry x:Name="ToEntry" Keyboard="Numeric" Placeholder="전체"/>
+            </VerticalStackLayout>
+          </Grid>
+          <Picker x:Name="FormatPicker" Title="형식">
+            <Picker.Items>
+              <x:String>EPUB</x:String>
+              <x:String>TXT</x:String>
+            </Picker.Items>
+          </Picker>
+          <Picker x:Name="BonusPicker" Title="BONUS">
+            <Picker.Items>
+              <x:String>범위에 맞춰 포함</x:String>
+              <x:String>항상 포함</x:String>
+              <x:String>항상 제외</x:String>
+            </Picker.Items>
+          </Picker>
+        </VerticalStackLayout>
+      </Border>
+
+      <Border StrokeShape="RoundRectangle 16" Padding="14">
+        <VerticalStackLayout Spacing="6">
+          <Label Text="고급 설정" Style="{StaticResource SectionTitle}"/>
+          <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto" ColumnSpacing="8">
+            <HorizontalStackLayout><CheckBox x:Name="NoticeCheck"/><Label Text="공지 포함" VerticalOptions="Center"/></HorizontalStackLayout>
+            <HorizontalStackLayout Grid.Column="1"><CheckBox x:Name="RemoveBlankCheck"/><Label Text="빈 줄 제거" VerticalOptions="Center"/></HorizontalStackLayout>
+
+            <HorizontalStackLayout Grid.Row="1"><CheckBox x:Name="KeepHtmlCheck"/><Label Text="HTML 유지" VerticalOptions="Center"/></HorizontalStackLayout>
+            <HorizontalStackLayout Grid.Row="1" Grid.Column="1"><CheckBox x:Name="ImageCheck"/><Label Text="이미지 다운로드" VerticalOptions="Center"/></HorizontalStackLayout>
+
+            <HorizontalStackLayout Grid.Row="2"><CheckBox x:Name="CompressCheck"/><Label Text="EPUB 압축" VerticalOptions="Center"/></HorizontalStackLayout>
+            <HorizontalStackLayout Grid.Row="2" Grid.Column="1"><CheckBox x:Name="StopErrorCheck"/><Label Text="오류 시 중단" VerticalOptions="Center"/></HorizontalStackLayout>
+
+            <HorizontalStackLayout Grid.Row="3"><CheckBox x:Name="NovelNoNameCheck"/><Label Text="파일명에 작품번호" VerticalOptions="Center"/></HorizontalStackLayout>
+            <HorizontalStackLayout Grid.Row="3" Grid.Column="1"><CheckBox x:Name="RangeNameCheck"/><Label Text="파일명에 범위" VerticalOptions="Center"/></HorizontalStackLayout>
+
+            <HorizontalStackLayout Grid.Row="4"><CheckBox x:Name="VerticalCheck"/><Label Text="세로쓰기" VerticalOptions="Center"/></HorizontalStackLayout>
+            <HorizontalStackLayout Grid.Row="4" Grid.Column="1"><CheckBox x:Name="GothicCheck"/><Label Text="고딕 글꼴" VerticalOptions="Center"/></HorizontalStackLayout>
+          </Grid>
+
+          <Grid ColumnDefinitions="*,*,*" ColumnSpacing="8">
+            <VerticalStackLayout>
+              <Label Text="재시도"/>
+              <Entry x:Name="RetryEntry" Keyboard="Numeric" Text="2"/>
+            </VerticalStackLayout>
+            <VerticalStackLayout Grid.Column="1">
+              <Label Text="동시 작업"/>
+              <Entry x:Name="ThreadEntry" Keyboard="Numeric" Text="3"/>
+            </VerticalStackLayout>
+            <VerticalStackLayout Grid.Column="2">
+              <Label Text="간격(초)"/>
+              <Entry x:Name="IntervalEntry" Keyboard="Numeric" Text="0.4"/>
+            </VerticalStackLayout>
+          </Grid>
+
+          <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+            <Entry x:Name="FontMapEntry" Placeholder="폰트 매핑 JSON (선택)" IsReadOnly="True"/>
+            <Button Grid.Column="1" Text="선택" Clicked="PickFontMapClicked"/>
+          </Grid>
+        </VerticalStackLayout>
+      </Border>
+
+      <Border StrokeShape="RoundRectangle 16" Padding="14">
+        <VerticalStackLayout Spacing="8">
+          <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="8">
+            <Label Text="작업" Style="{StaticResource SectionTitle}"/>
+            <Button Grid.Column="1" Text="목록 추가" Clicked="AddQueueClicked"/>
+            <Button Grid.Column="2" Text="목록 비우기" Clicked="ClearQueueClicked"/>
+          </Grid>
+          <CollectionView x:Name="QueueView" HeightRequest="150">
+            <CollectionView.ItemTemplate>
+              <DataTemplate>
+                <Grid Padding="4" ColumnDefinitions="*,Auto">
+                  <Label Text="{Binding Label}" VerticalOptions="Center"/>
+                  <Button Grid.Column="1" Text="삭제" Clicked="RemoveQueueClicked"/>
+                </Grid>
+              </DataTemplate>
+            </CollectionView.ItemTemplate>
+          </CollectionView>
+
+          <Grid ColumnDefinitions="*,*" ColumnSpacing="8">
+            <Button x:Name="DownloadButton" Text="현재 설정 다운로드" Clicked="DownloadClicked"/>
+            <Button x:Name="QueueButton" Grid.Column="1" Text="목록 일괄 다운로드" Clicked="RunQueueClicked"/>
+          </Grid>
+          <Button x:Name="StopButton" Text="중지" IsEnabled="False" Clicked="StopClicked"/>
+          <ProgressBar x:Name="Progress" Progress="0"/>
+          <Label x:Name="ProgressText" Text="대기 중"/>
+        </VerticalStackLayout>
+      </Border>
+
+      <Border StrokeShape="RoundRectangle 16" Padding="14">
+        <VerticalStackLayout>
+          <Label Text="로그" Style="{StaticResource SectionTitle}"/>
+          <Editor x:Name="LogEditor" IsReadOnly="True" MinimumHeightRequest="180" AutoSize="TextChanges"/>
+        </VerticalStackLayout>
+      </Border>
+    </VerticalStackLayout>
+  </ScrollView>
+</ContentPage>
