@@ -11,14 +11,14 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: '8.0.x'
+          dotnet-version: '10.0.x'
       - name: Install MAUI Android workload
         run: dotnet workload install maui-android
       - name: Build APK
-        run: dotnet publish NovelpiaMobile.csproj -f net8.0-android -c Debug
+        run: dotnet publish NovelpiaMobile.csproj -c Debug
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: NovelpiaMobile-APK
           path: |
-            **/bin/Debug/net8.0-android/**/*.apk
+            **/bin/Debug/**/*.apk
