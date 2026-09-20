@@ -36,7 +36,7 @@ ZIP은 소스 코드 묶음입니다. Android에서 설치하려면 APK로 컴�
 대신 아래 두 가지 빌드 방법을 포함했습니다.
 
 ### 방법 1: Windows PC
-.NET 8 SDK/Android 빌드 환경에서 `build-apk.cmd` 실행.
+.NET 10 SDK/Android 빌드 환경에서 `build-apk.cmd` 실행.
 
 ### 방법 2: GitHub Actions
 이 폴더를 GitHub 저장소에 올리고 Actions → Build Android APK → Run workflow.
