@@ -160,10 +160,27 @@ public partial class MainPage : ContentPage
             if(result != null)
             {
                 ProgressText.Text = "완료: " + result.FileName;
-                await Share.Default.RequestAsync(new ShareFileRequest {
-                    Title="다운로드 결과 저장/공유",
-                    File=new ShareFile(result.Path)
-                });
+                try
+                {
+                    if (!OperatingSystem.IsAndroidVersionAtLeast(29))
+                    {
+                        var st = await Permissions.RequestAsync<Permissions.StorageWrite>();
+                        if (st != PermissionStatus.Granted) throw new InvalidOperationException("저장소 권한이 거부되었습니다.");
+                    }
+                    var mime = result.FileName.EndsWith(".epub", StringComparison.OrdinalIgnoreCase) ? "application/epub+zip" : "text/plain";
+                    var saved = await Task.Run(() => DownloadSaver.SaveToDownloads(result.Path, result.FileName, mime));
+                    ProgressText.Text = "저장 완료: " + saved;
+                    AppendLog("저장 완료: " + saved);
+                    try { File.Delete(result.Path); } catch { }
+                }
+                catch (Exception saveEx)
+                {
+                    AppendLog("Download 폴더 저장 실패: " + saveEx.Message + " → 공유 화면으로 저장하세요.");
+                    await Share.Default.RequestAsync(new ShareFileRequest {
+                        Title="다운로드 결과 저장/공유",
+                        File=new ShareFile(result.Path)
+                    });
+                }
             }
         }
         catch(OperationCanceledException){ AppendLog("사용자가 중지했습니다."); }
